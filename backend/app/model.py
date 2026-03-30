@@ -40,6 +40,7 @@ def  predict_anomaly(data):
             return{
                 "anomaly":False,
                 "score":round(score,3),
+                "message": "normal traffic",
                 "reason": "High packet_count with high unique_ips (many users)"
             }
         
@@ -48,6 +49,7 @@ def  predict_anomaly(data):
             return{
                 "anomaly":True,
                 "score":round(abs(score),3),
+                "message": "suspicious traffic detected",
                 "reason": "High packet_count with very low unique_ips (possible DDoS)"
             } 
 
