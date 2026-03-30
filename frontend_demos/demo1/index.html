@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NeuralGuard IDS — AI Intrusion Detection System</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron&family=Exo+2&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ✅ ADD BELOW THIS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+</head>
+<body>
+
+  <!-- Animated background grid -->
+  <div class="bg-grid"></div>
+  <div class="scanline"></div>
+
+  <!-- Top particles -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+          <polygon points="20,2 38,11 38,29 20,38 2,29 2,11" stroke="#00ffe7" stroke-width="1.5" fill="none"/>
+          <polygon points="20,8 32,14 32,26 20,32 8,26 8,14" stroke="#00ffe7" stroke-width="1" fill="rgba(0,255,231,0.05)"/>
+          <circle cx="20" cy="20" r="5" fill="#00ffe7"/>
+          <line x1="20" y1="8" x2="20" y2="14" stroke="#00ffe7" stroke-width="1.5"/>
+          <line x1="20" y1="26" x2="20" y2="32" stroke="#00ffe7" stroke-width="1.5"/>
+          <line x1="8" y1="14" x2="14" y2="17" stroke="#00ffe7" stroke-width="1.5"/>
+          <line x1="32" y1="14" x2="26" y2="17" stroke="#00ffe7" stroke-width="1.5"/>
+          <line x1="8" y1="26" x2="14" y2="23" stroke="#00ffe7" stroke-width="1.5"/>
+          <line x1="32" y1="26" x2="26" y2="23" stroke="#00ffe7" stroke-width="1.5"/>
+        </svg>
+        <div>
+          <div class="logo-title">NEURALGUARD</div>
+          <div class="logo-sub">AI INTRUSION DETECTION SYSTEM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="threat-level-bar">
+        <span class="tl-label">THREAT LEVEL</span>
+        <div class="tl-segments">
+          <div class="tl-seg seg-1 active"></div>
+          <div class="tl-seg seg-2"></div>
+          <div class="tl-seg seg-3"></div>
+          <div class="tl-seg seg-4"></div>
+          <div class="tl-seg seg-5"></div>
+        </div>
+        <span class="tl-value" id="threatLevelText">LOW</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="system-status" id="systemStatus">
+        <span class="status-dot pulse-green"></span>
+        <span class="status-label">LIVE · MONITORING</span>
+      </div>
+      <div class="header-time" id="headerTime">--:--:--</div>
+      <div class="header-date" id="headerDate">--- -- ----</div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <main class="dashboard">
+
+    <!-- ROW 1: Stat Cards -->
+    <section class="stat-row">
+
+      <div class="stat-card" id="cardPackets">
+        <div class="card-accent accent-cyan"></div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-value" id="packetCount">0</div>
+          <div class="card-label">PACKETS CAPTURED</div>
+          <div class="card-delta" id="packetDelta">+0/s</div>
+        </div>
+        <div class="card-sparkline">
+          <canvas id="sparkPackets"></canvas>
+        </div>
+      </div>
+
+      <div class="stat-card" id="cardSize">
+        <div class="card-accent accent-blue"></div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-value" id="avgSize">0</div>
+          <div class="card-label">AVG PACKET SIZE (B)</div>
+          <div class="card-delta" id="sizeDelta">±0B</div>
+        </div>
+        <div class="card-sparkline">
+          <canvas id="sparkSize"></canvas>
+        </div>
+      </div>
+
+      <div class="stat-card" id="cardIPs">
+        <div class="card-accent accent-purple"></div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-value" id="uniqueIPs">0</div>
+          <div class="card-label">UNIQUE IP SOURCES</div>
+          <div class="card-delta" id="ipDelta">+0 new</div>
+        </div>
+        <div class="card-sparkline">
+          <canvas id="sparkIPs"></canvas>
+        </div>
+      </div>
+
+      <div class="stat-card" id="cardThreats">
+        <div class="card-accent accent-red"></div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-value" id="threatCount">0</div>
+          <div class="card-label">THREATS DETECTED</div>
+          <div class="card-delta" id="threatDelta">0 critical</div>
+        </div>
+        <div class="card-sparkline">
+          <canvas id="sparkThreats"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ROW 2: Main Chart + Anomaly Alert -->
+    <section class="mid-row">
+
+      <!-- Traffic Graph -->
+      <div class="panel traffic-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-dot dot-cyan"></span>
+            <span class="panel-title">NETWORK TRAFFIC ANALYSIS</span>
+          </div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" onclick="setChartMode('all')">ALL</button>
+            <button class="ctrl-btn" onclick="setChartMode('tcp')">TCP</button>
+            <button class="ctrl-btn" onclick="setChartMode('udp')">UDP</button>
+            <button class="ctrl-btn" onclick="setChartMode('icmp')">ICMP</button>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trafficChart"></canvas>
+        </div>
+        <div class="chart-footer">
+          <span class="cf-item"><i class="legend-dot" style="background:#00ffe7"></i>Inbound</span>
+          <span class="cf-item"><i class="legend-dot" style="background:#3d8bff"></i>Outbound</span>
+          <span class="cf-item"><i class="legend-dot" style="background:#ff3d71"></i>Blocked</span>
+        </div>
+      </div>
+
+      <!-- Right panel: Anomaly + Protocol Donut -->
+      <div class="right-col">
+
+        <!-- Anomaly Alert -->
+        <div class="panel anomaly-panel" id="anomalyPanel">
+          <div class="anomaly-status-line">
+            <span class="as-dot" id="anomalyDot"></span>
+            <span class="as-label" id="anomalyLabel">SYSTEM NORMAL</span>
+          </div>
+          <div class="anomaly-body">
+            <div class="anomaly-type" id="anomalyType">NO ACTIVE THREATS</div>
+            <div class="anomaly-meta" id="anomalyMeta">All traffic within expected parameters</div>
+            <div class="anomaly-confidence">
+              <span class="ac-label">AI CONFIDENCE</span>
+              <div class="ac-bar-wrap">
+                <div class="ac-bar" id="aiConfidenceBar"></div>
+              </div>
+              <span class="ac-pct" id="aiConfidencePct">99%</span>
+            </div>
+            <div class="anomaly-actions" id="anomalyActions" style="display:none">
+              <button class="action-btn btn-block">BLOCK SOURCE</button>
+              <button class="action-btn btn-analyze">DEEP ANALYZE</button>
+            </div>
+          </div>
+          <div class="pulse-ring" id="pulseRing"></div>
+        </div>
+
+        <!-- Protocol Donut -->
+        <div class="panel donut-panel">
+          <div class="panel-header">
+            <span class="panel-dot dot-blue"></span>
+            <span class="panel-title">PROTOCOL BREAKDOWN</span>
+          </div>
+          <div class="donut-wrap">
+            <canvas id="protocolChart"></canvas>
+            <div class="donut-center">
+              <div class="dc-val" id="donutTotal">0</div>
+              <div class="dc-label">TOTAL</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ROW 3: ML model + Activity Log -->
+    <section class="bottom-row">
+
+      <!-- ML Model Status (moved up into the left position) -->
+      <div class="panel ml-panel">
+        <div class="panel-header">
+          <span class="panel-dot dot-cyan"></span>
+          <span class="panel-title">ML MODEL STATUS</span>
+        </div>
+
+        <div class="ml-model-info">
+          <div class="ml-name">RandomForest-IDS v3.2</div>
+          <div class="ml-badge">ACTIVE</div>
+        </div>
+
+        <div class="ml-metrics">
+          <div class="ml-metric">
+            <div class="mm-label">ACCURACY</div>
+            <div class="mm-bar-wrap">
+              <div class="mm-bar" style="width:98.4%; background: linear-gradient(90deg, #00ffe7, #00c9a7)"></div>
+            </div>
+            <div class="mm-val">98.4%</div>
+          </div>
+          <div class="ml-metric">
+            <div class="mm-label">PRECISION</div>
+            <div class="mm-bar-wrap">
+              <div class="mm-bar" style="width:97.1%; background: linear-gradient(90deg, #3d8bff, #0052cc)"></div>
+            </div>
+            <div class="mm-val">97.1%</div>
+          </div>
+          <div class="ml-metric">
+            <div class="mm-label">RECALL</div>
+            <div class="mm-bar-wrap">
+              <div class="mm-bar" style="width:96.8%; background: linear-gradient(90deg, #b44dff, #7b2fff)"></div>
+            </div>
+            <div class="mm-val">96.8%</div>
+          </div>
+          <div class="ml-metric">
+            <div class="mm-label">F1 SCORE</div>
+            <div class="mm-bar-wrap">
+              <div class="mm-bar" style="width:97.0%; background: linear-gradient(90deg, #ffd600, #ff8c00)"></div>
+            </div>
+            <div class="mm-val">97.0%</div>
+          </div>
+        </div>
+
+        <div class="ml-inference">
+          <div class="mi-label">INFERENCE TIME</div>
+          <div class="mi-val" id="inferenceTime">2.3ms</div>
+        </div>
+
+        <div class="ml-classes">
+          <div class="mc-title">ATTACK CLASSIFICATION</div>
+          <div class="mc-list">
+            <div class="mc-item"><span class="mc-dot" style="background:#ff3d71"></span><span>DDoS</span><span class="mc-pct" id="pctDdos">0%</span></div>
+            <div class="mc-item"><span class="mc-dot" style="background:#ff8c00"></span><span>Port Scan</span><span class="mc-pct" id="pctScan">0%</span></div>
+            <div class="mc-item"><span class="mc-dot" style="background:#b44dff"></span><span>SQLi / XSS</span><span class="mc-pct" id="pctSql">0%</span></div>
+            <div class="mc-item"><span class="mc-dot" style="background:#3d8bff"></span><span>Brute Force</span><span class="mc-pct" id="pctBrute">0%</span></div>
+            <div class="mc-item"><span class="mc-dot" style="background:#00ffe7"></span><span>Normal</span><span class="mc-pct" id="pctNormal">100%</span></div>
+          </div>
+        </div>
+
+        <div class="ml-footer">
+          <div class="mf-item">
+            <div class="mf-label">PACKETS ANALYZED</div>
+            <div class="mf-val" id="mlPackets">0</div>
+          </div>
+          <div class="mf-item">
+            <div class="mf-label">MODEL UPDATED</div>
+            <div class="mf-val">2 hrs ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Log (unchanged, stays on the right side) -->
+      <div class="panel log-panel">
+        <div class="panel-header">
+          <span class="panel-dot dot-green"></span>
+          <span class="panel-title">ACTIVITY LOG</span>
+          <span class="log-counter" id="logCounter">0 EVENTS</span>
+        </div>
+        <div class="log-filters">
+          <button class="log-filter active" onclick="filterLogs('all')">ALL</button>
+          <button class="log-filter" onclick="filterLogs('alert')">ALERTS</button>
+          <button class="log-filter" onclick="filterLogs('info')">INFO</button>
+          <button class="log-filter" onclick="filterLogs('block')">BLOCKED</button>
+        </div>
+        <div class="log-body" id="logBody"></div>
+      </div>
+
+    </section>
+
+    <!-- ROW 4: Attack Origin Map moved down and full-width -->
+    <section class="map-row">
+      <div class="panel geo-panel">
+
+        <div class="panel-header">
+          <span class="panel-dot dot-purple"></span>
+          <span class="panel-title">ATTACK ORIGIN MAP</span>
+          <span class="panel-badge" id="activeAttackers">0 ACTIVE</span>
+        </div>
+
+        <div class="geo-wrap">
+          <div id="map" style="height: 350px; width: 100%; border-radius: 12px;"></div>
+        </div>
+
+        <div class="geo-legend">
+          <span class="gl-item"><i class="gl-dot" style="background:#ff3d71"></i>Attack Source</span>
+          <span class="gl-item"><i class="gl-dot" style="background:#00ffe7"></i>Protected Node</span>
+          <span class="gl-item"><i class="gl-dot" style="background:#ffd600"></i>Suspicious</span>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

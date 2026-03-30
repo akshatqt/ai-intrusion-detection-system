@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AEGIS — AI Intrusion Detection System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Scanline overlay -->
+  <div class="scanlines"></div>
+  <!-- Grid background -->
+  <div class="grid-bg"></div>
+
+  <!-- ═══════════════════════ HEADER ═══════════════════════ -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-wrapper">
+        <div class="logo-hex">
+          <svg viewBox="0 0 60 60" width="48" height="48">
+            <polygon points="30,3 55,17 55,43 30,57 5,43 5,17" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+            <polygon points="30,10 48,20 48,40 30,50 12,40 12,20" fill="none" stroke="var(--green)" stroke-width="0.5" opacity="0.4"/>
+            <text x="30" y="36" text-anchor="middle" font-family="'Orbitron',sans-serif" font-size="14" font-weight="900" fill="var(--green)">AI</text>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">AEGIS</span>
+          <span class="logo-sub">AI INTRUSION DETECTION SYSTEM v3.7.2</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="status-badge" id="statusBadge">
+        <span class="pulse-dot" id="pulseDot"></span>
+        <span class="status-label" id="statusLabel">LIVE · MONITORING</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="header-meta">
+        <div class="meta-item">
+          <span class="meta-label">NODE</span>
+          <span class="meta-val" id="nodeId">SRV-0xA4F2</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">UPTIME</span>
+          <span class="meta-val" id="uptimeCounter">00:00:00</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">UTC</span>
+          <span class="meta-val" id="clockDisplay">--:--:--</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════ TICKER ═══════════════════════ -->
+  <div class="ticker-bar">
+    <div class="ticker-label">THREAT INTEL</div>
+    <div class="ticker-track">
+      <div class="ticker-content" id="tickerContent">
+        ██ CVE-2024-3109 · RCE in OpenSSH detected &nbsp;|&nbsp; ██ DDoS from AS14618 flagged &nbsp;|&nbsp; ██ Brute-force cluster @ 203.0.113.44 &nbsp;|&nbsp; ██ Lateral movement on subnet 10.0.4.x &nbsp;|&nbsp; ██ Port scan sweep · SYN flood signature matched &nbsp;|&nbsp; ██ Malware beacon → C2 server blacklisted &nbsp;|&nbsp; ██ SQL injection attempt intercepted on :3306 &nbsp;|&nbsp;
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ MAIN LAYOUT ═══════════════════════ -->
+  <main class="dashboard">
+
+    <!-- ── ROW 1: Stat Cards ── -->
+    <section class="stat-row">
+
+      <div class="stat-card" id="cardPackets">
+        <div class="stat-card-bg"></div>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 3H8L2 7h20z"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">PACKETS CAPTURED</div>
+          <div class="stat-value" id="packetCount">0</div>
+          <div class="stat-delta positive" id="packetDelta">↑ +0/s</div>
+        </div>
+        <div class="stat-sparkline">
+          <canvas id="sparkPackets" width="80" height="36"></canvas>
+        </div>
+      </div>
+
+      <div class="stat-card" id="cardAvgSize">
+        <div class="stat-card-bg"></div>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 12h18M3 6h18M3 18h12"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">AVG PACKET SIZE</div>
+          <div class="stat-value" id="avgSize">0 <span class="stat-unit">B</span></div>
+          <div class="stat-delta neutral" id="sizeDelta">─ stable</div>
+        </div>
+        <div class="stat-sparkline">
+          <canvas id="sparkSize" width="80" height="36"></canvas>
+        </div>
+      </div>
+
+      <div class="stat-card" id="cardUniqueIPs">
+        <div class="stat-card-bg"></div>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">UNIQUE IPs</div>
+          <div class="stat-value" id="uniqueIPs">0</div>
+          <div class="stat-delta positive" id="ipDelta">↑ +0 new</div>
+        </div>
+        <div class="stat-sparkline">
+          <canvas id="sparkIPs" width="80" height="36"></canvas>
+        </div>
+      </div>
+
+      <div class="stat-card" id="cardThreats">
+        <div class="stat-card-bg"></div>
+        <div class="stat-icon threat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-label">THREATS BLOCKED</div>
+          <div class="stat-value" id="threatsBlocked">0</div>
+          <div class="stat-delta negative" id="threatDelta">↑ +0 events</div>
+        </div>
+        <div class="stat-sparkline">
+          <canvas id="sparkThreats" width="80" height="36"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── ROW 2: Main Chart + Alert Panel ── -->
+    <section class="mid-row">
+
+      <!-- Traffic Graph -->
+      <div class="panel traffic-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-title-icon">◈</span>
+            NETWORK TRAFFIC ANALYSIS
+          </div>
+          <div class="panel-controls">
+            <button class="ctrl-btn active" data-view="live">LIVE</button>
+            <button class="ctrl-btn" data-view="1h">1H</button>
+            <button class="ctrl-btn" data-view="24h">24H</button>
+            <div class="legend">
+              <span class="legend-dot green"></span>Normal
+              <span class="legend-dot red"></span>Anomaly
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="trafficChart"></canvas>
+        </div>
+        <div class="chart-footer">
+          <div class="cf-item">
+            <span class="cf-label">THROUGHPUT</span>
+            <span class="cf-val" id="throughput">0 Mbps</span>
+          </div>
+          <div class="cf-item">
+            <span class="cf-label">LATENCY</span>
+            <span class="cf-val" id="latency">0 ms</span>
+          </div>
+          <div class="cf-item">
+            <span class="cf-label">DROP RATE</span>
+            <span class="cf-val" id="dropRate">0.00%</span>
+          </div>
+          <div class="cf-item">
+            <span class="cf-label">ML MODEL</span>
+            <span class="cf-val green">LSTM · 97.4%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: Alert + Protocol breakdown -->
+      <div class="right-col">
+
+        <!-- Anomaly Alert -->
+        <div class="panel alert-panel" id="alertPanel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span class="panel-title-icon">⚠</span>
+              THREAT STATUS
+            </div>
+            <div class="alert-count-badge" id="alertCountBadge">0 events</div>
+          </div>
+
+          <div class="alert-status-block" id="alertStatusBlock">
+            <div class="alert-ring" id="alertRing">
+              <div class="alert-ring-inner">
+                <div class="alert-state-icon" id="alertIcon">
+                  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="alert-state-label" id="alertStateLabel">SYSTEM SECURE</div>
+            <div class="alert-state-sub" id="alertStateSub">All traffic within normal parameters</div>
+          </div>
+
+          <div class="threat-details" id="threatDetails" style="display:none">
+            <div class="threat-row">
+              <span class="tr-label">TYPE</span>
+              <span class="tr-val" id="threatType">—</span>
+            </div>
+            <div class="threat-row">
+              <span class="tr-label">SOURCE IP</span>
+              <span class="tr-val" id="threatSrc">—</span>
+            </div>
+            <div class="threat-row">
+              <span class="tr-label">TARGET PORT</span>
+              <span class="tr-val" id="threatPort">—</span>
+            </div>
+            <div class="threat-row">
+              <span class="tr-label">CONFIDENCE</span>
+              <span class="tr-val green" id="threatConf">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Protocol Donut -->
+        <div class="panel proto-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span class="panel-title-icon">◉</span>
+              PROTOCOL DISTRIBUTION
+            </div>
+          </div>
+          <div class="donut-wrap">
+            <canvas id="protoChart" width="140" height="140"></canvas>
+            <div class="donut-center">
+              <span id="donutTotal">0</span>
+              <span class="donut-label">pkts</span>
+            </div>
+          </div>
+          <div class="proto-legend" id="protoLegend"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ROW 3: Geo Map + Activity Log + Connection Table ── -->
+    <section class="bottom-row">
+
+      <!-- Geo threat map (SVG-based) -->
+      <div class="panel geo-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-title-icon">⊕</span>
+            GLOBAL THREAT ORIGIN MAP
+          </div>
+          <div class="geo-live-tag">LIVE</div>
+        </div>
+        <div class="geo-map-wrap" id="geoMapWrap">
+          <div class="geo-grid"></div>
+          <!-- Attack beams injected by JS -->
+          <div class="geo-nodes" id="geoNodes"></div>
+          <div class="geo-pulses" id="geoPulses"></div>
+        </div>
+        <div class="geo-stats">
+          <div class="gs-item"><span class="gs-label">TOP ORIGIN</span><span class="gs-val" id="topOrigin">—</span></div>
+          <div class="gs-item"><span class="gs-label">ATTACK VECTORS</span><span class="gs-val" id="attackVectors">0</span></div>
+          <div class="gs-item"><span class="gs-label">BLOCKED IPs</span><span class="gs-val" id="blockedIPs">0</span></div>
+        </div>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="panel log-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-title-icon">▤</span>
+            ACTIVITY LOG
+          </div>
+          <div class="log-controls">
+            <button class="ctrl-btn active small" id="filterAll">ALL</button>
+            <button class="ctrl-btn small" id="filterAlert">ALERT</button>
+            <button class="ctrl-btn small" id="filterInfo">INFO</button>
+          </div>
+        </div>
+        <div class="log-scroll" id="activityLog">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Connection Table -->
+      <div class="panel conn-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-title-icon">⋮⋮</span>
+            ACTIVE CONNECTIONS
+          </div>
+          <div class="conn-count" id="connCount">0 active</div>
+        </div>
+        <div class="conn-table-wrap">
+          <table class="conn-table">
+            <thead>
+              <tr>
+                <th>SRC IP</th>
+                <th>DST PORT</th>
+                <th>PROTO</th>
+                <th>BYTES</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="connTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════ ANOMALY OVERLAY ═══════════════════════ -->
+  <div class="anomaly-overlay" id="anomalyOverlay"></div>
+
+  <!-- ═══════════════════════ TOAST NOTIFICATION ═══════════════════════ -->
+  <div class="toast-area" id="toastArea"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
