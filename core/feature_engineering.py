@@ -43,6 +43,10 @@ def extract_features(packets: list[dict]) -> dict | None:
     proto_counts = Counter(p["protocol"] for p in packets)
     protocol = proto_counts.most_common(1)[0][0]
 
+    if protocol not in ["TCP", "UDP", "ICMP"]:
+        protocol = "TCP"
+
+
     return {
         "packet_count": packet_count,
         "avg_packet_size": avg_packet_size,

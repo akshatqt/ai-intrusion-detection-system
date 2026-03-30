@@ -31,6 +31,8 @@ def  predict_anomaly(data):
     score = model.decision_function([features])[0]
     print("DEBUG:", data["packet_count"], data["unique_ips"])
 
+
+    #hardcoded values , incase of overnight hype
     if data["packet_count"] > 800 :
         print("HIGH TRAFFIC DETECTED")
         if data["unique_ips"] > 20:
@@ -38,7 +40,7 @@ def  predict_anomaly(data):
             return{
                 "anomaly":False,
                 "score":round(score,3),
-                "message":"High traffic but likely legitimate"
+                "reason": "High packet_count with high unique_ips (many users)"
             }
         
         else:
@@ -46,19 +48,21 @@ def  predict_anomaly(data):
             return{
                 "anomaly":True,
                 "score":round(abs(score),3),
-                "message":"High traffic from limited resources (possible DDoS)"
-            }
+                "reason": "High packet_count with very low unique_ips (possible DDoS)"
+            } 
 
     if prediction == - 1:
         return {
             "anomaly":True,
             "score":round(abs(score),3),
-            "message":"suspicious traffic detected"
+            "message":"suspicious traffic detected",
+            "reason": "Pattern deviates significantly from learned normal behavior"
         }
     
     else:
         return {
             "anomaly":False,
             "score":round(score,3),
-            "message":"normal traffic"
+            "message":"normal traffic",
+            "reason": "Traffic pattern matches learned baseline"
         }

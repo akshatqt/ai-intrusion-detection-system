@@ -95,7 +95,16 @@ def run_pipeline(iface: str | None, api_url: str):
             else:
                 tag = f"{GREEN}✅ NORMAL{RESET}"
 
-            print(f"  → {tag}  score={score}  {message}\n")
+            threat = result.get("threat_level", "UNKNOWN")
+            reason = result.get("reason", "")
+
+            print(
+                f"  → {tag}  "
+                f"score={score}  "
+                f"threat={threat}  "
+                f"{message}\n"
+                f"     reason: {reason}\n"
+            )
 
     except KeyboardInterrupt:
         print(f"\n{YELLOW}[Stream] Shutting down…{RESET}")

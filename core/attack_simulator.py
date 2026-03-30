@@ -82,13 +82,18 @@ def send_payload(payload: dict, api_url: str):
         else:
             tag = f"{GREEN}✅ NORMAL{RESET}"
 
+        threat = result.get("threat_level", "UNKNOWN")
+        reason = result.get("reason", "")
+
         print(
             f"  packets={payload['packet_count']:>5}  "
             f"avg_size={payload['avg_packet_size']:>7}  "
             f"ips={payload['unique_ips']:>3}  "
             f"proto={payload['protocol']:<5}  "
-            f"→ {tag}  score={score}  {message}"
+            f"→ {tag}  score={score}  threat={threat}  {message}\n"
+            f"     reason: {reason}"
         )
+
     except Exception as e:
         print(f"{RED}  Error: {e}{RESET}")
 
