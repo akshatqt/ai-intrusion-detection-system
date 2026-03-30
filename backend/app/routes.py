@@ -29,6 +29,15 @@ def predict(data: dict):
         "confidence": result["score"]
     }
 
+    # Attach geolocation data if provided by the core pipeline
+    if "threat_source_ip" in data:
+        log_entry["threat_source_ip"] = data["threat_source_ip"]
+        log_entry["threat_source_country"] = data.get("threat_source_country", "Unknown")
+        log_entry["threat_source_city"] = data.get("threat_source_city", "Unknown")
+        log_entry["threat_source_lat"] = data.get("threat_source_lat", 0.0)
+        log_entry["threat_source_lon"] = data.get("threat_source_lon", 0.0)
+        log_entry["threat_source_isp"] = data.get("threat_source_isp", "Unknown")
+
     logs.append(log_entry)
 
     return log_entry

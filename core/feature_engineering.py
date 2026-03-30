@@ -8,6 +8,8 @@ and computes the exact features the backend /predict endpoint expects:
     avg_packet_size: float – mean packet length
     unique_ips     : int   – number of distinct source IPs
     protocol       : str   – most frequent protocol ("TCP"/"UDP"/"ICMP")
+
+Also identifies the top source IP (by packet count) for geolocation.
 """
 
 from collections import Counter
@@ -24,8 +26,8 @@ def extract_features(packets: list[dict]) -> dict | None:
 
     Returns
     -------
-    dict with keys packet_count, avg_packet_size, unique_ips, protocol
-    or None if the window was empty (nothing to report).
+    dict with keys packet_count, avg_packet_size, unique_ips, protocol,
+    top_source_ip — or None if the window was empty.
     """
     if not packets:
         return None
@@ -37,15 +39,21 @@ def extract_features(packets: list[dict]) -> dict | None:
     avg_packet_size = round(total_size / packet_count, 2)
 
     # Unique source IPs
-    unique_ips = len({p["src_ip"] for p in packets})
+    src_ips = [p["src_ip"] for p in packets]
+    unique_ips = len(set(src_ips))
 
     # Most frequent protocol
     proto_counts = Counter(p["protocol"] for p in packets)
     protocol = proto_counts.most_common(1)[0][0]
+
+    # Top source IP (most packets) — used for geolocation
+    ip_counts = Counter(src_ips)
+    top_source_ip = ip_counts.most_common(1)[0][0]
 
     return {
         "packet_count": packet_count,
         "avg_packet_size": avg_packet_size,
         "unique_ips": unique_ips,
         "protocol": protocol,
+        "top_source_ip": top_source_ip,
     }
