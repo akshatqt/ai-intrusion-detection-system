@@ -205,3 +205,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+core/main.py
+core/pyproject.toml
+core/.python-version
+core/.venv
+core/uv.lock
