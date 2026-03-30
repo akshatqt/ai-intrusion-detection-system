@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neural Guard | Login</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="background">
+      <div class="bg-layer bg-layer-1"></div>
+      <div class="bg-layer bg-layer-2"></div>
+      <div class="bg-network"></div>
+    </div>
+
+    <main class="auth-wrapper">
+      <section class="auth-card" aria-labelledby="app-title">
+        <header class="auth-header">
+          <h1 id="app-title" class="app-title">
+            NEURAL GUARD AI INTRUSION DETECTION SYSTEM
+          </h1>
+          <p class="app-subtitle">Login to your account</p>
+        </header>
+
+        <form id="loginForm" class="auth-form" novalidate>
+          <div class="field-group">
+            <label for="email" class="field-label">Email</label>
+            <div class="field-control">
+              <span class="field-icon" aria-hidden="true">
+                <!-- simple mail icon -->
+                <svg viewBox="0 0 24 24" class="icon-svg">
+                  <path
+                    d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm0 2v.2l8 5 8-5V7l-8 5-8-5z"
+                  />
+                </svg>
+              </span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="field-input"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+            <p class="field-error" id="emailError"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="password" class="field-label">Password</label>
+            <div class="field-control">
+              <span class="field-icon" aria-hidden="true">
+                <!-- simple lock icon -->
+                <svg viewBox="0 0 24 24" class="icon-svg">
+                  <path
+                    d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1zm2 0h6V7a3 3 0 0 0-6 0v3z"
+                  />
+                </svg>
+              </span>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="field-input"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                id="togglePassword"
+                aria-label="Toggle password visibility"
+              >
+                <span class="password-toggle-icon" aria-hidden="true">👁</span>
+              </button>
+            </div>
+            <p class="field-error" id="passwordError"></p>
+            <p class="password-hint">
+              Password must be at least 8 characters and include uppercase,
+              lowercase, number, and special character.
+            </p>
+          </div>
+
+          <div class="auth-links-row">
+            <a href="#" class="auth-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            Login
+          </button>
+
+          <div class="divider">
+            <span class="divider-line"></span>
+            <span class="divider-text">or continue with</span>
+            <span class="divider-line"></span>
+          </div>
+
+          <button type="button" class="btn btn-google" id="googleSignIn">
+            <span class="google-icon" aria-hidden="true">G</span>
+            <span>Sign in with Google</span>
+          </button>
+
+          <p class="auth-footer-text">
+            Don't have an account?
+            <a href="#" class="auth-link">Sign up</a>
+          </p>
+
+          <p class="auth-note">
+            Google Sign-In is a placeholder. Integrate Firebase or your IdP to
+            enable production authentication.
+          </p>
+        </form>
+      </section>
+
+      <section class="auth-side-copy" aria-hidden="true">
+        <h2 class="side-title">Adaptive Neural Threat Detection</h2>
+        <p class="side-text">
+          Neural Guard continuously models network behavior, detects anomalies,
+          and responds to intrusions in real time using advanced machine
+          learning pipelines.
+        </p>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

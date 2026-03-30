@@ -221,46 +221,10 @@
       </div>
     </section>
 
-    <!-- ROW 3: Geo map + Activity Log + ML model -->
+    <!-- ROW 3: ML model + Activity Log -->
     <section class="bottom-row">
-<!-- Attack origin map -->
-<div class="panel geo-panel">
 
-  <div class="panel-header">
-    <span class="panel-dot dot-purple"></span>
-    <span class="panel-title">ATTACK ORIGIN MAP</span>
-    <span class="panel-badge" id="activeAttackers">0 ACTIVE</span>
-  </div>
-
-  <div class="geo-wrap">
-    <div id="map" style="height: 350px; width: 100%; border-radius: 12px;"></div>
-  </div>
-
-  <div class="geo-legend">
-    <span class="gl-item"><i class="gl-dot" style="background:#ff3d71"></i>Attack Source</span>
-    <span class="gl-item"><i class="gl-dot" style="background:#00ffe7"></i>Protected Node</span>
-    <span class="gl-item"><i class="gl-dot" style="background:#ffd600"></i>Suspicious</span>
-  </div>
-
-</div>
-
-      <!-- Activity Log -->
-      <div class="panel log-panel">
-        <div class="panel-header">
-          <span class="panel-dot dot-green"></span>
-          <span class="panel-title">ACTIVITY LOG</span>
-          <span class="log-counter" id="logCounter">0 EVENTS</span>
-        </div>
-        <div class="log-filters">
-          <button class="log-filter active" onclick="filterLogs('all')">ALL</button>
-          <button class="log-filter" onclick="filterLogs('alert')">ALERTS</button>
-          <button class="log-filter" onclick="filterLogs('info')">INFO</button>
-          <button class="log-filter" onclick="filterLogs('block')">BLOCKED</button>
-        </div>
-        <div class="log-body" id="logBody"></div>
-      </div>
-
-      <!-- ML Model Status -->
+      <!-- ML Model Status (moved up into the left position) -->
       <div class="panel ml-panel">
         <div class="panel-header">
           <span class="panel-dot dot-cyan"></span>
@@ -331,6 +295,45 @@
         </div>
       </div>
 
+      <!-- Activity Log (unchanged, stays on the right side) -->
+      <div class="panel log-panel">
+        <div class="panel-header">
+          <span class="panel-dot dot-green"></span>
+          <span class="panel-title">ACTIVITY LOG</span>
+          <span class="log-counter" id="logCounter">0 EVENTS</span>
+        </div>
+        <div class="log-filters">
+          <button class="log-filter active" onclick="filterLogs('all')">ALL</button>
+          <button class="log-filter" onclick="filterLogs('alert')">ALERTS</button>
+          <button class="log-filter" onclick="filterLogs('info')">INFO</button>
+          <button class="log-filter" onclick="filterLogs('block')">BLOCKED</button>
+        </div>
+        <div class="log-body" id="logBody"></div>
+      </div>
+
+    </section>
+
+    <!-- ROW 4: Attack Origin Map moved down and full-width -->
+    <section class="map-row">
+      <div class="panel geo-panel">
+
+        <div class="panel-header">
+          <span class="panel-dot dot-purple"></span>
+          <span class="panel-title">ATTACK ORIGIN MAP</span>
+          <span class="panel-badge" id="activeAttackers">0 ACTIVE</span>
+        </div>
+
+        <div class="geo-wrap">
+          <div id="map" style="height: 350px; width: 100%; border-radius: 12px;"></div>
+        </div>
+
+        <div class="geo-legend">
+          <span class="gl-item"><i class="gl-dot" style="background:#ff3d71"></i>Attack Source</span>
+          <span class="gl-item"><i class="gl-dot" style="background:#00ffe7"></i>Protected Node</span>
+          <span class="gl-item"><i class="gl-dot" style="background:#ffd600"></i>Suspicious</span>
+        </div>
+
+      </div>
     </section>
   </main>
 

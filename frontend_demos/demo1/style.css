@@ -308,8 +308,17 @@ html, body {
 .dc-val { font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; color: var(--blue); text-shadow: 0 0 15px var(--blue); }
 .dc-label { font-family: var(--font-mono); font-size: 0.55rem; color: rgba(200,224,244,0.4); letter-spacing: 2px; }
 
-/* BOTTOM ROW */
-.bottom-row { display: grid; grid-template-columns: 2fr 1.2fr 1fr; gap: 16px; }
+/* BOTTOM ROW: ML model + Activity Log */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr; /* ML left, Activity Log right */
+  gap: 16px;
+}
+
+/* MAP ROW: Attack Origin Map full-width */
+.map-row {
+  margin-top: 16px;
+}
 
 /* Geo */
 .geo-wrap { width: 100%; margin-bottom: 10px; }

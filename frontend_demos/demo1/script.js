@@ -4,6 +4,9 @@
 ───────────────────────────────────────────── */
 
 /* ── STATE ── */
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "../demo2/login.html";
+}
 const state = {
   packetCount: 0,
   avgSize: 512,
