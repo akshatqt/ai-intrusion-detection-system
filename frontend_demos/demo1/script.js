@@ -537,7 +537,7 @@ geoLineStyle.textContent = `
 `;
 document.head.appendChild(geoLineStyle);
 
-renderGeoBase();
+//renderGeoBase();
 
 /* ── CHART MODE ── */
 window.setChartMode = (mode) => {
@@ -595,3 +595,33 @@ setInterval(() => {
 setInterval(() => {
   if (state.isAttack) addAttackLine();
 }, 600);
+// 🌍 Initialize world map
+document.addEventListener("DOMContentLoaded", function () {
+
+   var map = L.map('map').setView([20, 0], 2);
+
+  map.attributionControl.setPrefix(false);
+
+  /*L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: ''
+  }).addTo(map); */
+ L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+    attribution: ''
+}).addTo(map);
+//L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+
+    var attacks = [
+        {lat: 28.6, lng: 77.2},
+        {lat: 37.7, lng: -122.4},
+        {lat: 51.5, lng: -0.1}
+    ];
+
+    attacks.forEach(loc => {
+        L.circleMarker([loc.lat, loc.lng], {
+            color: '#00ffe7',
+            radius: 6,
+            className: 'attack-marker'
+        }).addTo(map);
+    });
+
+});
